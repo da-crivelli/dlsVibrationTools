@@ -49,5 +49,11 @@ def get_vib_alarms(data:pd.DataFrame, vc_threshold:str = "G"):
 
     #TODO: add an exclusion times PV (list of tuples?)
     vc_alarm_val = vc_get_threshold(vc_threshold)
-    # TODO: needs sorting by channel before doing this
+
+    #TODO: when supporting multiple PVs, it will need grouping by channel before doing these next bits
     data['VC_Alarm'] = data.apply(lambda x: False if x['VC_Peak'] < vc_alarm_val else True, axis=1)
+
+    #TODO: can we avoid adding a column altogether and creating alarm_list from the lambda function above?
+    alarm_list = data.loc[data['VC_Alarm']==True].copy()
+
+    alarm_list['Time_To_Next'] = alarm_list['Time'].shift(-1) - alarm_list['Time']
