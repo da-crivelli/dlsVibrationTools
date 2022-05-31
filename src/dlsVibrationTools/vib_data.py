@@ -1,8 +1,9 @@
 from datetime import datetime
-from aa.js import JsonFetcher
-import pandas as pd
-from vc_curves import vc_get_threshold, vc_get_level
 
+import pandas as pd
+from aa.js import JsonFetcher
+
+from dlsVibrationTools.vc_curves import vc_get_level, vc_get_threshold
 
 APPLIANCE_URL = 'archappl.diamond.ac.uk'
 

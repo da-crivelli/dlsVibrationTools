@@ -2,7 +2,7 @@ import logging
 from argparse import ArgumentParser
 from datetime import datetime
 
-from vib_data import fetch_pv_to_dataframe
+from dlsVibrationTools.vib_data import fetch_pv_to_dataframe
 
 from . import __version__
 
@@ -15,6 +15,7 @@ def main(args=None):
     logger.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    #logger.setFormatter(formatter)
     
     parser = ArgumentParser()
     parser.add_argument("--version", action="version", version=__version__)
@@ -36,8 +37,9 @@ def main(args=None):
 
     # Threshold for "alarms" report (will trigger if above the velocity required to meet this level's spec)
     vc_threshold = 'G'
-    logger.warning('VC level not implemented - defaulting to VC-G alarms for now')
+    logger.warning('VC level not implemented - defaulting to VC-G alarms for now!')
 
+    logger.info('Fetching data from EPICS...')
     df = fetch_pv_to_dataframe(pv_name = pv_name, 
     start_date = start_date,
     end_date = end_date)
