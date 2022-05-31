@@ -1,16 +1,24 @@
-[[source]]
+name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
-name = "pypi"
+
+[dev-packages]
+dlsVibrationTools = {editable = true, extras = ["dev"], path = "."}
 
 [packages]
+dlsVibrationTools = {editable = true, path = "."}
 aapy = "*"
 numpy = "*"
 pandas = "*"
 seaborn = "*"
 matplotlib = "*"
 
-[dev-packages]
-
 [requires]
 python_version = "3.7"
+
+[scripts]
+lint = "pre-commit run --all-files --show-diff-on-failure --color=always -v"
+tests = "pytest"
+docs = "sphinx-build -EWT --keep-going docs build/html"
+# Delete any files that git ignore hides from us
+gitclean = "git clean -fdX"
