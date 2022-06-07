@@ -1,4 +1,4 @@
-.. include:: ../README.rst
+.. include:: ../README.md
     :end-before: when included in index.rst
 
 

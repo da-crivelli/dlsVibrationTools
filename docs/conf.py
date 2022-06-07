@@ -32,6 +32,7 @@ extensions = [
     "sphinx.ext.viewcode",
     # Adds the inheritance-diagram generation directive
     "sphinx.ext.inheritance_diagram",
+    "sphinx.ext.autosummary",
 ]
 
 # If true, Sphinx will warn about all references where the target cannot

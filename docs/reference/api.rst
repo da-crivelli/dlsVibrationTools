@@ -17,8 +17,9 @@ using ``autoclass`` and ``autofunction`` directives instead of
 
     Version number as calculated by https://github.com/dls-controls/versiongit
 
-.. automodule:: dlsVibrationTools.hello
-    :members:
 
-    ``dlsVibrationTools.hello``
-    -----------------------------------------
+.. automodule:: dlsVibrationTools.vib_archive.vib_archive
+
+
+.. autosummary::
+   :toctree: generated
