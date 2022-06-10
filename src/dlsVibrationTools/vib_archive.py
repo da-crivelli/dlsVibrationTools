@@ -7,7 +7,7 @@ from aa.js import JsonFetcher
 
 from dlsVibrationTools.vc_curves import vc_get_level, vc_get_threshold
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
+# logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 class vib_archive:
@@ -72,11 +72,9 @@ class vib_archive:
             beamline = self.default_beamline
             logging.warning(
                 (
-                    "Beamline {} not recognised or working from a "
+                    "Beamline not recognised or working from a "
                     "non-beamline machine, defaulting to {}"
-                ),
-                environ["BEAMLINE"],
-                beamline,
+                ).format(beamline)
             )
 
         # let's make the name "canonical" (from i20 to BL20I)
@@ -126,7 +124,7 @@ class vib_archive:
 
             logging.info("Fetching PV {} from {}".format(pv, self.appliance_url))
             data = jf.get_values(pv, start_date, end_date)
-            logging.debug("Finished fetching PV {}".format(pv))
+            logging.info("Finished fetching PV {}".format(pv))
 
             # time-specific stuff
             this_pv_df["Time"] = data.utc_datetimes

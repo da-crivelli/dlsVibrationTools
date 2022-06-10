@@ -1,21 +1,33 @@
 version: 1
 
+disable_existing_loggers: False
+
 formatters:
   brief:
+    class: logging.Formatter
     format: '%(message)s'
   precise:
+    class: logging.Formatter
     format: '%(asctime)s %(levelname)-8s %(name)-15s %(message)s'
-    datefmt: '%Y-%m-%d %H:%M:%S'
 
 handlers:
   console:
-    class : logging.StreamHandler
-    formatter: brief
-    level   : INFO
-    stream  : ext://sys.stdout
-  file:
-    class : logging.handlers.RotatingFileHandler
+    class: logging.StreamHandler
     formatter: precise
-    filename: logconfig.log
-    maxBytes: 1024
-    backupCount: 3  
+    level: INFO
+    stream: ext://sys.stdout
+  file:
+    class: logging.handlers.RotatingFileHandler
+    formatter: precise
+    level: WARNING
+    filename: logs/dlsVibrationTools.log
+    maxBytes: 51200
+    backupCount: 3
+
+loggers:
+  dlsVibrationTools.__main__:
+    handlers: ["console", "file"]
+    propagate: False
+  '':
+    handlers: ["console", "file"]
+    level: "INFO"

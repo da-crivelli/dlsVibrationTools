@@ -21,19 +21,8 @@ def logging_setup():
 
     with open("logging.conf.yml", "r") as f:
         config = yaml.safe_load(f.read())
+        print(config)
         logging.config.dictConfig(config)
-
-    # logging = logging.getLogging(__name__)
-    # handler = logging.StreamHandler()
-    # log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    # )
-    # handler.setFormatter(formatter)
-    # logging.addHandler(handler)
-    # logging.setLevel(logging.DEBUG)
-
-    # return logging
-
-    # logging.basicConfig(format=log_format, level=logging.INFO)
 
 
 def main(args=None):
