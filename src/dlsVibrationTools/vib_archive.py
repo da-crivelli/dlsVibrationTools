@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from os import environ
 
@@ -5,6 +6,8 @@ import pandas as pd
 from aa.js import JsonFetcher
 
 from dlsVibrationTools.vc_curves import vc_get_level, vc_get_threshold
+
+logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 class vib_archive:
@@ -48,9 +51,6 @@ class vib_archive:
             _type_: _description_
         """
 
-        if variable not in self.implemented_variables:
-            raise NotImplementedError()
-
         PVs = [
             self.pv_mask.format(beamline=beamline, id=id, chan=chan, var=variable)
             for chan in channels
@@ -70,14 +70,23 @@ class vib_archive:
             beamline = environ["BEAMLINE"]
         except KeyError:
             beamline = self.default_beamline
-            # TODO: log this
+            logging.warning(
+                (
+                    "Beamline {} not recognised or working from a "
+                    "non-beamline machine, defaulting to {}"
+                ),
+                environ["BEAMLINE"],
+                beamline,
+            )
 
         # let's make the name "canonical" (from i20 to BL20I)
         if beamline[0] in ("i", "j", "k"):
             beamline = "BL{0}{1}".format(beamline[1:], beamline[0].upper())
         else:
-            raise NotImplementedError()
-            # TODO: log this
+            raise NotImplementedError(
+                "Currently only iXX, jXX and kXX beamlines are supported"
+            )
+
         return beamline
 
     def fetch_pv_to_dataframe(
@@ -97,6 +106,9 @@ class vib_archive:
                           useful data
         """
 
+        if pv_name not in self.implemented_variables:
+            raise NotImplementedError()
+
         jf = JsonFetcher(self.appliance_url, 80)
 
         # TODO: support multiple PVs (maybe from the base system PV and automatically
@@ -111,24 +123,41 @@ class vib_archive:
 
         for pv in pv_fullnames:
             this_pv_df = pd.DataFrame()
+
+            logging.info("Fetching PV {} from {}".format(pv, self.appliance_url))
             data = jf.get_values(pv, start_date, end_date)
+            logging.debug("Finished fetching PV {}".format(pv))
 
+            # time-specific stuff
             this_pv_df["Time"] = data.utc_datetimes
-            this_pv_df["VC_Peak"] = data.values
-            this_pv_df["VC_Level"] = this_pv_df.apply(
-                lambda x: vc_get_level(x["VC_Peak"]), axis=1
-            )
-
             this_pv_df["dT"] = this_pv_df["Time"].shift(-1) - this_pv_df["Time"]
             this_pv_df["dT_Seconds"] = this_pv_df.apply(
                 lambda x: x["dT"].total_seconds(), axis=1
             )  # needed for histplot
 
+            # metadata
             this_pv_df["PV"] = pv
+
+            # this is specific to VC peak data
+            if pv_name == "VC_PEAK":
+                this_pv_df["VC_Peak"] = data.values
+                this_pv_df["VC_Level"] = this_pv_df.apply(
+                    lambda x: vc_get_level(x["VC_Peak"]), axis=1
+                )
+            elif pv_name == "FFT":
+                this_pv_df["FFT"] = data.values.tolist()
+
+            # concatenate current PV to the rest... of the fire...
             df = pd.concat([df, this_pv_df], axis=0).reset_index(drop=True)
 
+        logging.info("Finished fetching all PVs")
+
+        # handle categorical data appropriately
+        if pv_name == "VC_PEAK":
+            df["VC_Level"] = df["VC_Level"].astype("category")
+
         df["PV"] = df["PV"].astype("category")
-        df["VC_Level"] = df["VC_Level"].astype("category")
+
         return df
 
 
