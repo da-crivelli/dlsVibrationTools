@@ -101,6 +101,7 @@ def main(args=None):
     # Threshold for "alarms" report (will trigger if above the velocity
     # required to meet this level's spec)
     vc_threshold = "G"
+    arch.set_vc_threshold(vc_threshold)
     logging.warning("VC level not implemented - defaulting to VC-G alarms for now!")
 
     # fetch data & display

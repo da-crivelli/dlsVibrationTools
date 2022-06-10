@@ -158,6 +158,9 @@ class vib_archive:
 
         return df
 
+    def set_vc_threshold(self, vc_thresh: str) -> None:
+        self.vc_threshold = vc_thresh
+
 
 def get_vib_alarms(data: pd.DataFrame, vc_threshold: str = "G"):
     """returns a dataframe of alarms including time and duration
